@@ -27,7 +27,7 @@ python -c "import nu_coincidence; import sbi; print('env ok')"
 
 echo "Starting coincidence sims: $(date)"
 
-python 00_generate_coincidence_sims.py \
+python pipeline/00_generate_coincidence_sims.py \
     --n_sims    50000       \
     --n_workers 60          \
     --chunk_size 5          \

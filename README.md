@@ -96,7 +96,7 @@ IceCube events (ra, dec, reco_energy)
    → out/calibration/{sbc_ranks,coverage,ppc}.png
           │
           ▼
-   [03_infer.py]
+   [pipeline/03_infer.py]
    Condition on observed x_obs
    → out/inference/posterior_samples.npy  (N_samples × 6)
    → out/inference/corner.png
@@ -163,11 +163,12 @@ dev/
 │   ├── pdet.py                  ← PdetGrid: load/interpolate p_det(N_src, sindec, γ)
 │   ├── ts_scan.py               ← TSScan: HEALPix TS map (icecube_tools)
 │   └── significance.py         ← survival_function, ts_to_pvalue, discovery_potential
-├── 00_generate_sims.py          ← Step 0: simulate training set
-├── 00b_generate_ts_maps.py      ← Step 0b: generate HEALPix TS maps (skymap mode)
-├── 01_train_nre.py              ← Step 1: train NRE classifier
-├── 02_calibrate.py              ← Step 2: SBC + coverage
-└── 03_infer.py                  ← Step 3: posterior + constraining plots
+└── pipeline/
+    ├── 00_generate_sims.py      ← Step 0: simulate training set
+    ├── 00b_generate_ts_maps.py  ← Step 0b: HEALPix TS maps (skymap mode)
+    ├── 01_train_nre.py          ← Step 1: train NRE classifier
+    ├── 02_calibrate.py          ← Step 2: SBC + coverage
+    └── 03_infer.py              ← Step 3: posterior + constraining plots
 ```
 
 ---
@@ -180,18 +181,18 @@ pip install -r requirements.txt
 pip install git+https://github.com/cescalara/icecube_tools.git
 
 # Smoke test (200 sims, fast)
-python 00_generate_sims.py --n_sims 200 --n_z 50
-python 01_train_nre.py --epochs 10 --n_ensemble 1
-python 02_calibrate.py --n_sbc 50 --n_post 200 --n_coverage 50
-python 03_infer.py     # uses synthetic injection, no real data needed
+python pipeline/00_generate_sims.py --n_sims 200 --n_z 50
+python pipeline/01_train_nre.py --epochs 10 --n_ensemble 1
+python pipeline/02_calibrate.py --n_sbc 50 --n_post 200 --n_coverage 50
+python pipeline/03_infer.py     # uses synthetic injection, no real data needed
 ```
 
 Full run (50k sims, 3-ensemble):
 ```bash
-python 00_generate_sims.py --n_sims 50000
-python 01_train_nre.py
-python 02_calibrate.py
-python 03_infer.py --x_obs path/to/x_obs.npy
+python pipeline/00_generate_sims.py --n_sims 50000
+python pipeline/01_train_nre.py
+python pipeline/02_calibrate.py
+python pipeline/03_infer.py --x_obs path/to/x_obs.npy
 ```
 
 ---

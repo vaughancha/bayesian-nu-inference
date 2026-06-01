@@ -9,7 +9,7 @@ Setup (run once per terminal session):
 STEP 0 — Generate 50k simulations
 Estimated time: ~82 min on 16 workers
 
-python 00_generate_sims.py \
+python pipeline/00_generate_sims.py \
   --n_sims 50000 \
   --n_z 50 \
   --n_workers 16 \
@@ -25,7 +25,7 @@ Notes:
 STEP 1 — Train NRE
 Estimated time: ~10-30 min depending on convergence
 
-python 01_train_nre.py \
+python pipeline/01_train_nre.py \
   --sims_h5 out/sims_50k.h5 \
   --out_dir out/nre_50k \
   --n_ensemble 3 \
@@ -41,7 +41,7 @@ Notes:
 STEP 2 — Calibrate (SBC + coverage)
 Estimated time: ~20-40 min
 
-python 02_calibrate.py \
+python pipeline/02_calibrate.py \
   --posterior out/nre_50k/nre_population_posterior.pkl \
   --sims_h5 out/sims_50k.h5 \
   --out_dir out/cal_50k \
@@ -62,7 +62,7 @@ Notes:
 STEP 3 — Inference and constraining plots
 Estimated time: ~5-10 min
 
-python 03_infer.py \
+python pipeline/03_infer.py \
   --posterior out/nre_50k/nre_population_posterior.pkl \
   --out_dir out/inf_50k \
   --n_samples 5000
