@@ -266,12 +266,18 @@ synthetic data before applying to real observations.
 
 ---
 
-## Citation
+## Citations
 
-If you use the physics implementation, please cite:
-
+Population inference (`population/`):
 ```
 Capel, Mortlock & Finley (2020)
 Bayesian constraints on the astrophysical neutrino population from IceCube data
 arXiv:2005.02395
+```
+
+Blazar-neutrino coincidence inference (`coincidence/`):
+```
+Capel et al. (2022)
+Determining the contribution of blazars to the high-energy neutrino flux
+arXiv:2201.05633
 ```
