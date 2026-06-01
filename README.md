@@ -137,7 +137,7 @@ MCMC (slice sampling, via sbi) samples from this unnormalized log-prob.
 - Output: scalar log-ratio
 - Ensemble of 3, weighted by validation BCE loss
 
-**Reference runs:** Prior BayH work used NPE on HEALPix sky maps
+**Reference runs:** Prior work used NPE on HEALPix sky maps
 (259 epochs, val log-prob −11.6). This repo uses NRE on a flat
 expected-counts summary, making the Bayesian update explicit.
 
@@ -216,15 +216,13 @@ These are available at https://icecube.wisc.edu/data-releases/
 To use real data: process events through `snr/ts_scan.py` to get a TSResult,
 then compress to a summary statistic x and pass to `03_infer.py`.
 
-### Precomputed assets (from BayH)
+### Precomputed assets (optional)
 
-If you have access to the BayH directory, the following speed up setup:
-- `nu_pop/1_detection_probability/output/precomputed_pdet_30_3_6_Nevents497.h5`
-  → load with `snr.pdet.load_pdet_grid()`
-- `nu_pop/1_detection_probability/output/bg_5e5.h5`, `pl_1e6.h5`
-  → background and signal simulations for `TSScan`
-- `nu_pop/2_hierarchical_model/samples/*.h5`
-  → Stan posterior chains for comparison
+The `snr/` module can load precomputed p_det grids and background/signal
+simulations if you have them from a prior IceCube analysis. Expected file layout:
+- `precomputed_pdet_*.h5` → load with `snr.pdet.load_pdet_grid()`
+- `bg_5e5.h5`, `pl_1e6.h5` → background and signal simulations for `TSScan`
+- Stan posterior chain `.h5` files → for comparison against the NRE posterior
 
 ---
 
