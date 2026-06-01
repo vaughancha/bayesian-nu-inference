@@ -281,3 +281,32 @@ Capel et al. (2022)
 Determining the contribution of blazars to the high-energy neutrino flux
 arXiv:2201.05633
 ```
+
+---
+
+## Software & References
+
+**Neural Ratio Estimation:**
+```
+Hermans, Begy & Louppe (2020)
+Likelihood-free inference via classification
+arXiv:2002.12737
+
+Implemented via the sbi package:
+Tejero-Cantero et al. (2020)
+sbi: A toolkit for simulation-based inference
+Journal of Open Source Software, 5(52), 2505
+```
+
+**Population synthesis:**
+```
+The popsynth package is used to generate blazar populations.
+https://github.com/grburgess/popsynth
+```
+
+**Coincidence analysis:**
+The coincidence likelihood implementation (arXiv:2201.05633) uses:
+```
+icecube_tools: IceCube analysis tools
+https://github.com/cescalara/icecube_tools
+```
