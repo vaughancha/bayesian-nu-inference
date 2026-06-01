@@ -30,6 +30,18 @@ conservative (above diagonal).
 
 ![Coverage](results/coverage.png)
 
+## Interpretation
+
+The posteriors are consistent with what Capel et al. (2020) found using the Stan hierarchical model — the NRE recovers the same physics with a likelihood-free approach.
+
+The spectral index γ comes out around 2.5, which lines up well with IceCube's measured diffuse flux index. That's a good sign the inference is pulling real signal and not just reflecting the prior.
+
+The n₀–L degeneracy in the corner plot is expected and physical. IceCube essentially measures the total neutrino flux, which depends on the product of source density and luminosity. You can have many faint sources or fewer bright ones and get the same counts. Breaking that degeneracy requires either a resolved source or spatial information — expected counts alone can't do it.
+
+The redshift evolution parameters (p₁, p₂, z_c) are basically unconstrained. This isn't a failure of the method — it reflects the fact that the count-based summary integrates over redshift and loses most of the shape information. Sky maps or time-domain data would help here, since you'd retain some redshift structure through the energy distribution.
+
+The calibration (SBC ranks roughly flat, coverage near the diagonal) confirms the posterior is honest. It's not overclaiming — the wide marginals on evolution parameters reflect genuine ignorance, not a bug.
+
 ---
 
 ## What this does
