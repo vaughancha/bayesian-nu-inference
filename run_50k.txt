@@ -1,0 +1,92 @@
+50k SIMULATION RUN — full pipeline commands
+Estimated total wall time: ~2.5 hours
+
+Setup (run once per terminal session):
+    cd /path/to/dev
+    conda activate nu_pop
+    export PYTHONPATH=/path/to/dev
+
+STEP 0 — Generate 50k simulations
+Estimated time: ~82 min on 16 workers
+
+python 00_generate_sims.py \
+  --n_sims 50000 \
+  --n_z 50 \
+  --n_workers 16 \
+  --chunk_size 50 \
+  --out out/sims_50k.h5
+
+Notes:
+  - n_z=50 is accurate enough; n_z=100 doubles runtime with marginal gain
+  - chunk_size=50 means each worker handles 50 sims before returning
+  - Monitor temps: watch -n 2 "sensors | grep 'Core\|Package'"
+  - Safe to leave running; outputs to out/sims_50k.h5 on completion
+
+STEP 1 — Train NRE
+Estimated time: ~10-30 min depending on convergence
+
+python 01_train_nre.py \
+  --sims_h5 out/sims_50k.h5 \
+  --out_dir out/nre_50k \
+  --n_ensemble 3 \
+  --epochs 30 \
+  --batch_size 256
+
+Notes:
+  - n_ensemble=3 trains 3 classifiers and weights by validation loss
+  - Target val BCE < 0.15 for a well-trained posterior
+  - Val BCE 0.0144 on 5k sims was very sharp; 50k should be similar or better
+  - Saved to out/nre_50k/nre_population_posterior.pkl
+
+STEP 2 — Calibrate (SBC + coverage)
+Estimated time: ~20-40 min
+
+python 02_calibrate.py \
+  --posterior out/nre_50k/nre_population_posterior.pkl \
+  --sims_h5 out/sims_50k.h5 \
+  --out_dir out/cal_50k \
+  --n_sbc 200 \
+  --n_post 500 \
+  --n_coverage 100 \
+  --n_z 20 \
+  --skip_ppc \
+  --batch_size 200
+
+Notes:
+  - n_z=20 inside calibration keeps the simulator fast (does not affect NRE quality)
+  - SBC rank histograms should be roughly flat — if U-shaped, NRE is overconfident
+  - Coverage curve should lie near the diagonal — if below, posterior is too wide;
+    if above, posterior is too narrow
+  - Outputs: out/cal_50k/sbc_ranks.png, coverage.png
+
+STEP 3 — Inference and constraining plots
+Estimated time: ~5-10 min
+
+python 03_infer.py \
+  --posterior out/nre_50k/nre_population_posterior.pkl \
+  --out_dir out/inf_50k \
+  --n_samples 5000
+
+Notes:
+  - No --n_candidates or --batch_size needed; uses sbi native rejection sampler
+  - Synthetic injection at theta* = [-6, 2.5, 44, 2, -1, 2] unless --x_obs passed
+  - Outputs:
+      constraining.png      prior vs posterior per parameter + constraint factors
+      likelihood_ratio.png  log r(theta, x_obs) profile per parameter
+      corner.png            joint posteriors (6x6 corner plot)
+      posterior_samples.npy (5000, 6) float32
+
+What to look for in the 50k outputs vs 5k:
+  - Constraint factors should increase (target >3x for log10_n0, gamma, log10_L)
+  - Likelihood ratio profiles should show clear peaks over the prior (not flat)
+  - Corner plot should show tighter, less fragmented contours
+  - SBC ranks should remain roughly flat (calibration preserved at more data)
+  - log10_n0 / log10_L degeneracy will still appear as a ridge in the 2D corner
+
+KNOWN LIMITATIONS
+  - p1, p2, zc (redshift evolution) are weakly constrained by expected counts —
+    this is a physics degeneracy, not a pipeline bug. The count summary statistic
+    integrates out redshift information. Sky maps (00b_generate_ts_maps.py) would
+    help constrain these.
+  - log10_n0 and log10_L are partially degenerate (same counts from many n0×L
+    combinations). This shows as a correlated ridge in the corner plot.

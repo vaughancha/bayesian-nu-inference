@@ -1,0 +1,38 @@
+#!/bin/bash
+#PBS -N nu_coincidence_sims
+#PBS -l select=1:ncpus=64:mem=128gb
+#PBS -l walltime=12:00:00
+#PBS -q prod
+#PBS -A <YOUR_ALLOCATION>
+#PBS -o logs/coincidence_sims.out
+#PBS -e logs/coincidence_sims.err
+
+# ---------------------------------------------------------------------------
+# Polaris job: generate 50k blazar-neutrino coincidence simulations
+# Estimated time: ~9 hours on 64 cores (43s/sim ÷ 64 workers)
+# ---------------------------------------------------------------------------
+
+set -e
+cd /home/<YOUR_USERNAME>/dev           # ← update this path
+
+mkdir -p logs out
+
+# Load conda environment
+module load conda
+conda activate nu_pop
+export PYTHONPATH=/home/<YOUR_USERNAME>/dev
+
+# Verify environment
+python -c "import nu_coincidence; import sbi; print('env ok')"
+
+echo "Starting coincidence sims: $(date)"
+
+python 00_generate_coincidence_sims.py \
+    --n_sims    50000       \
+    --n_workers 60          \
+    --chunk_size 5          \
+    --obs_time  10.0        \
+    --seed      42          \
+    --out       out/coincidence_sims_50k.h5
+
+echo "Done: $(date)"

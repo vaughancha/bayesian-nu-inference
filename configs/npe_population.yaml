@@ -1,0 +1,42 @@
+# NRE training config for neutrino population inference
+
+engine: NRE
+backend: sbi
+
+# prior bounds — uniform over parameter space
+# theta = [log10_n0, gamma, log10_L, p1, p2, zc]
+prior:
+  log10_n0: [-10.0, -3.0]   # local source density (Mpc^-3)
+  gamma:    [1.5,   3.5]     # spectral index
+  log10_L:  [40.0, 48.0]    # luminosity (erg/s)
+  p1:       [-3.0,  6.0]    # evolution (1+z)^p1 term
+  p2:       [-6.0,  0.0]    # evolution (1+z/zc)^p2 term
+  zc:       [0.5,   5.0]    # evolution pivot redshift
+
+# summary statistic x: expected counts per (E-bin x dec-bin)
+summary:
+  n_E_bins: 6               # log-spaced [1e2, 1e7] GeV
+  n_dec_bins: 10            # uniform [-pi/2, pi/2]
+  d_x: 60                   # = n_E_bins * n_dec_bins
+
+# ratio classifier (MLP)
+model:
+  type: mlp
+  hidden_features: 256
+  num_layers: 3
+
+# training
+train:
+  n_simulations: 50000
+  training_batch_size: 256
+  learning_rate: 5.0e-4
+  validation_fraction: 0.1
+  stop_after_epochs: 30
+  clip_max_norm: 5.0
+  seed: 42
+
+# calibration
+calibration:
+  n_sbc: 500
+  n_post: 1000
+  n_coverage_test: 300

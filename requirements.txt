@@ -1,0 +1,18 @@
+# Core inference
+torch>=2.0
+sbi>=0.23.0
+
+# Physics / numerics
+numpy>=1.24
+scipy>=1.10
+h5py>=3.9
+
+# Sky geometry
+healpy>=1.16
+
+# Visualisation / diagnostics
+matplotlib>=3.7
+arviz>=0.16
+
+# IceCube likelihood (install from source)
+# pip install git+https://github.com/cescalara/icecube_tools.git

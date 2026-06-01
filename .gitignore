@@ -1,0 +1,29 @@
+# Outputs
+out/
+sbi-logs/
+
+# Internal development notes
+CLAUDE.md
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editors
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Large data files
+*.h5
+*.hdf5
+*.npz
+*.pkl
+*.npy
